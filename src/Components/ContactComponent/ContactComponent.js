@@ -1,25 +1,63 @@
-import { View, Text, Image, TouchableOpacity, FlatList, Animated } from 'react-native'
+import { View, Text, Image, TouchableOpacity, FlatList, Animated, Alert, Button } from 'react-native'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Colors from '../../Utils/Constant/Color'
 import { useSelector, useDispatch } from 'react-redux'
 import * as Animatable from 'react-native-animatable';
+import { addFavorite } from '../../Redux/slice'
 
 function ContactComponent({ style, dataContact }) {
     const { contact } = useSelector(state => state)
-    const { data, loading } = contact
+    const { favorite, data, loading } = contact
+    const dispatch = useDispatch()
+    
+    console.log(favorite);
+
+
+    const deleteContact = useCallback((contact) => {
+        Alert.alert('Delete Contact', `Are you sure for delete ${contact.firstName + ' ' + contact.lastName} from your contact ?`, [
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            { text: "OK", onPress: () => console.log("OK Pressed") }
+        ])
+    }, [])
+
+    const favoriteContact = useCallback((contact) => {
+        Alert.alert('Add Favorite Contact', `Are you sure for add ${contact.firstName + ' ' + contact.lastName} to your favorite contact ?`, [
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            { text: "OK", onPress: () => dispatch(addFavorite(contact)) }
+        ])
+
+    }, [])
+
+    const editContact = useCallback((contact) => {
+
+    }, [])
+
+
     return (
         <View style={{ ...style, width: '100%', flex: 1, alignItems: 'center' }}>
-            {/* <Text style={{ fontSize: 28, marginTop: 15, fontWeight: '500' }}>All Contacts</Text> */}
+            <Text style={{ fontSize: 18, alignSelf: 'flex-start', paddingHorizontal: 10 }}>All Contact</Text>
             <FlatList
                 style={{ flex: 1, width: '100%' }}
-                contentContainerStyle={{ width: '100%' }}
+                contentContainerStyle={{ width: '100%', marginTop: 10 }}
                 data={data}
-                renderItem={({ item }) => {
-                    return (
-                        <ItemsContact photo={item.photo} firstName={item.firstName} lastName={item.lastName} />
-                    )
-                }}
+                renderItem={({ item }) =>
+                    <ItemsContact
+                        deleteContact={() => deleteContact(item)}
+                        favoriteContact={() => favoriteContact(item)}
+                        photo={item.photo}
+                        firstName={item.firstName}
+                        lastName={item.lastName} />
+
+                }
                 keyExtractor={({ id }, i) => i}
             />
 
@@ -35,15 +73,32 @@ export default React.memo(ContactComponent)
 
 
 
-function ItemsContact({ firstName, lastName, photo }) {
+function ItemsContact({ firstName, lastName, photo, deleteContact, updateContact, favoriteContact }) {
     const [options, setOptions] = useState(false)
-    const itemRef = useRef()
 
     function closeOptions(e) {
-        if (itemRef.current) {
-            setOptions(prev => prev = false)
-        }
+        setOptions(prev => prev = false)
     }
+    const anim = {
+        from: {
+            // opacity: !options ? 0 : 1,
+            left: options ? 0 : 200,
+            // transform: [{ translateX: options ? 200 : 0 }]
+        },
+        to: {
+            left: options ? 200 : 0,
+        },
+    };
+    const animOptions = {
+        from: {
+            opacity: !options ? 1 : 0,
+            transform: [{ translateX: options ? -300 : 10 }]
+        },
+        to: {
+            transform: [{ translateX: !options ? -300 : 10 }],
+            opacity: !options ? 0 : 1
+        },
+    };
     useEffect(() => {
         const close = setTimeout(() => {
             if (options) setOptions(prev => prev = false)
@@ -52,37 +107,12 @@ function ItemsContact({ firstName, lastName, photo }) {
         return () => clearTimeout(close)
     }, [options])
 
-    const anim = {
-        from: {
-            // opacity: !options ? 0 : 1,
-            left: options ? 0 : 200,
-            // transform: [{ translateX: options ? 200 : 0 }]
-        },
-        to: {
-            // transform: [{ translateX: !options ? 0 : 200 }],
-            left: options ? 200 : 0,
-            // opacity: !options ? 1 : 0,
-        },
-    };
-    const animOptions = {
-        from: {
-            opacity: !options ? 1 : 0,
-            // left: !options && -200,
-            // transform: [{ translateX: !options ? -300 : 10 }]
-            transform: [{ translateX: options ? -300 : 10 }]
-        },
-        to: {
-            transform: [{ translateX: !options ? -300 : 10 }],
-            // transform: [{ translateX: options ? 10 : -300 }],
-            // left: options && 0,
-            opacity: !options ? 0 : 1
-        },
-    };
+
 
 
     return (
-
-        <View ref={itemRef} onStartShouldSetResponder={closeOptions} style={{ marginVertical: 2, borderBottomColor: Colors.gray, borderBottomWidth: 0.5, paddingHorizontal: 15, width: '100%', height: 85, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <View onStartShouldSetResponder={closeOptions}
+            style={{ marginVertical: 1, borderBottomColor: Colors.gray, borderBottomWidth: 0.5, paddingHorizontal: 15, width: '100%', height: 85, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
             {/* === Img === */}
             <Animatable.View duration={500} easing='ease-in-out' animation={anim} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -99,13 +129,13 @@ function ItemsContact({ firstName, lastName, photo }) {
 
             {/* === Options === */}
             <Animatable.View duration={500} animation={animOptions} style={{ flexDirection: 'row', position: 'absolute', alignItems: 'center' }}>
-                <TouchableOpacity style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.red }}>
+                <TouchableOpacity onPress={deleteContact} style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.red }}>
                     <Ionicons name={'trash'} size={25} color={'white'} />
                 </TouchableOpacity>
                 <TouchableOpacity style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.yellow }}>
                     <Ionicons name={'pencil'} size={25} color={'white'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.green }}>
+                <TouchableOpacity onPress={favoriteContact} style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.green }}>
                     <Ionicons name={'bookmark'} size={25} color={'white'} />
                 </TouchableOpacity>
             </Animatable.View>

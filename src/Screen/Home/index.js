@@ -167,10 +167,10 @@ const FakeData = [
 ]
 
 export default function HomeScreen() {
+    const navigate = useNavigation()
     const route = useRoute()
     const { contact } = useSelector((state) => state)
-    const navigate = useNavigation()
-
+    const { data, favorite } = contact
     return (
         <View style={{ flex: 1, width: '100%', alignItems: 'center', backgroundColor: Colors.white }}>
             <View style={{ backgroundColor: Colors.coklat, position: 'absolute', width: '100%', height: 100 }} />
@@ -182,7 +182,7 @@ export default function HomeScreen() {
             <SearchInputComponent input={(data) => console.log(data)} style={{ marginTop: 35 }} />
 
             {/* Favorite Contact Component */}
-            <FavoriteComponent favoriteData={FakeData} style={{ marginTop: 20 }} />
+            <FavoriteComponent favoriteData={favorite} style={{ marginTop: 20 }} />
 
             {/* Contact Content */}
             <ContactComponent />

@@ -130,6 +130,7 @@ const initData = {
             "photo": "https://i.pinimg.com/564x/00/c6/af/00c6afef099ca4cf4e2f9c2cac33b04f.jpg"
         },
     ],
+    favorite: [],
     error: false,
     message: ''
 }
@@ -149,9 +150,13 @@ export const contactSlice = createSlice({
         },
         editContact: async (state, payload) => {
 
+        },
+        addFavorite: (state, { payload }) => {
+            return { ...state, favorite: [...state.favorite, { ...payload }] }
+            console.log(state.favorite);
         }
     }
 })
 
-export const { getData, addContact, deleteContact, editContact } = contactSlice.actions
+export const { getData, addContact, deleteContact, editContact, addFavorite } = contactSlice.actions
 export default contactSlice.reducer
