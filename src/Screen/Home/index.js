@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import Colors from '../../Utils/Constant/Color'
@@ -8,6 +8,7 @@ import { useRoute } from '@react-navigation/native';
 import SearchInputComponent from '../../Components/InputComponent/InputComponent'
 import FavoriteComponent from '../../Components/FavoriteComponent/FavoriteComponent';
 import ContactComponent from '../../Components/ContactComponent/ContactComponent';
+import UseFetchdata from '../../Utils/CustomHooks/useFetchData';
 
 const FakeData = [
     {
@@ -170,13 +171,19 @@ export default function HomeScreen() {
     const navigate = useNavigation()
     const route = useRoute()
     const { contact } = useSelector((state) => state)
-    const { data, favorite } = contact
+    const { data, loading, favorite } = contact
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+    }, [loading])
+
     return (
         <View style={{ flex: 1, width: '100%', alignItems: 'center', backgroundColor: Colors.white }}>
             <View style={{ backgroundColor: Colors.coklat, position: 'absolute', width: '100%', height: 100 }} />
 
             {/* Top Bar Component */}
-            <TopBarComponent title={route.name} style={{ marginTop: 5 }} />
+            <TopBarComponent title={route.name} style={{ marginTop: 5 }} rightIconMethod={() => navigate.navigate('Add Contact')} />
 
             {/* Search Component */}
             <SearchInputComponent input={(data) => console.log(data)} style={{ marginTop: 35 }} />
@@ -185,12 +192,9 @@ export default function HomeScreen() {
             <FavoriteComponent favoriteData={favorite} style={{ marginTop: 20 }} />
 
             {/* Contact Content */}
-            <ContactComponent />
-
-
-            {/* <TouchableOpacity onPress={() => navigate.navigate('Details', { name: 'ridwan', age: 26 })}>
-                <Text>Press</Text>
-            </TouchableOpacity> */}
+            {loading ? <Text>Loading...</Text> :
+                <ContactComponent />
+            }
         </View>
     )
 }

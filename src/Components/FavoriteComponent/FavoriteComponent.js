@@ -3,12 +3,12 @@ import React from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 
-function FavoriteComponent({ style, favoriteData = FakeData }) {
+function FavoriteComponent({ style, favoriteData }) {
     return (
         <View style={{ ...style, paddingBottom: 10, width: '100%', borderBottomWidth: 0.4, borderBottomColor: 'white', paddingHorizontal: 10 }}>
             <Text style={{ fontSize: 18 }}>Favorite Contact</Text>
-           
-            {favoriteData.length == 0 ?
+
+            {!favoriteData ?
                 <TouchableOpacity style={{ flexDirection: 'row', marginTop: 20, marginHorizontal: 'auto', alignSelf: 'center', padding: 4, alignItems: 'center', justifyContent: 'center', }}>
                     <Text style={{ marginHorizontal: 10 }}>Add Favorite Contact</Text>
                     <Ionicons name="add-circle" color={'gray'} size={30} />

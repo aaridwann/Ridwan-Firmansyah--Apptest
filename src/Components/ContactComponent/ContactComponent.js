@@ -5,13 +5,15 @@ import Colors from '../../Utils/Constant/Color'
 import { useSelector, useDispatch } from 'react-redux'
 import * as Animatable from 'react-native-animatable';
 import { addFavorite } from '../../Redux/slice'
+import { useNavigation } from '@react-navigation/native'
+import DeleteContact from '../../Utils/CustomHooks/DeleteContact'
+
 
 function ContactComponent({ style, dataContact }) {
     const { contact } = useSelector(state => state)
-    const { favorite, data, loading } = contact
+    const { data } = contact
     const dispatch = useDispatch()
-    
-    console.log(favorite);
+    const navigation = useNavigation()
 
 
     const deleteContact = useCallback((contact) => {
@@ -21,7 +23,10 @@ function ContactComponent({ style, dataContact }) {
                 onPress: () => console.log("Cancel Pressed"),
                 style: "cancel"
             },
-            { text: "OK", onPress: () => console.log("OK Pressed") }
+            {
+                text: "OK", onPress: async () => await DeleteContact(dispatch, contact.id)
+
+            }
         ])
     }, [])
 
@@ -44,10 +49,10 @@ function ContactComponent({ style, dataContact }) {
 
     return (
         <View style={{ ...style, width: '100%', flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontSize: 18, alignSelf: 'flex-start', paddingHorizontal: 10 }}>All Contact</Text>
+            <Text style={{ fontSize: 18, alignSelf: 'flex-start', paddingHorizontal: 10, marginTop: 15 }}>All Contact</Text>
             <FlatList
                 style={{ flex: 1, width: '100%' }}
-                contentContainerStyle={{ width: '100%', marginTop: 10 }}
+                contentContainerStyle={{ width: '100%', paddingTop: 20 }}
                 data={data}
                 renderItem={({ item }) =>
                     <ItemsContact
@@ -55,10 +60,13 @@ function ContactComponent({ style, dataContact }) {
                         favoriteContact={() => favoriteContact(item)}
                         photo={item.photo}
                         firstName={item.firstName}
-                        lastName={item.lastName} />
+                        lastName={item.lastName}
+                        id={item.id}
+                        goDetails={() => navigation.navigate('Contact Details', { item })}
+                    />
 
                 }
-                keyExtractor={({ id }, i) => i}
+                keyExtractor={({ id }, i) => id}
             />
 
 
@@ -69,12 +77,10 @@ function ContactComponent({ style, dataContact }) {
 export default React.memo(ContactComponent)
 
 
-
-
-
-
-function ItemsContact({ firstName, lastName, photo, deleteContact, updateContact, favoriteContact }) {
+function ItemsContact({ id, firstName, lastName, photo, deleteContact, updateContact, favoriteContact, goDetails }) {
+    let { favorite } = useSelector(state => state.contact)
     const [options, setOptions] = useState(false)
+    favorite = favorite?.map((x) => x.id)
 
     function closeOptions(e) {
         setOptions(prev => prev = false)
@@ -116,9 +122,11 @@ function ItemsContact({ firstName, lastName, photo, deleteContact, updateContact
 
             {/* === Img === */}
             <Animatable.View duration={500} easing='ease-in-out' animation={anim} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={{ overflow: 'hidden', height: 60, width: 60, marginHorizontal: 10, backgroundColor: 'white', borderRadius: 50, backgroundColor: 'red' }}>
-                    <Image style={{ width: '100%', height: '100%' }} source={{ uri: photo || 'https://i.pinimg.com/564x/46/53/63/465363f6c1b791bfbf19ab85914aac92.jpg' }} />
-                </View>
+                <TouchableOpacity onPress={goDetails}>
+                    <View style={{ overflow: 'hidden', height: 60, width: 60, marginHorizontal: 10, backgroundColor: 'white', borderRadius: 50, backgroundColor: 'red' }}>
+                        <Image style={{ width: '100%', height: '100%' }} source={{ uri: photo || 'https://i.pinimg.com/564x/46/53/63/465363f6c1b791bfbf19ab85914aac92.jpg' }} />
+                    </View>
+                </TouchableOpacity>
 
                 <View>
                     <Text style={{ fontSize: 17 }}>{firstName}</Text>
@@ -135,9 +143,11 @@ function ItemsContact({ firstName, lastName, photo, deleteContact, updateContact
                 <TouchableOpacity style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.yellow }}>
                     <Ionicons name={'pencil'} size={25} color={'white'} />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={favoriteContact} style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.green }}>
-                    <Ionicons name={'bookmark'} size={25} color={'white'} />
-                </TouchableOpacity>
+                {!favorite?.includes(id) &&
+                    <TouchableOpacity onPress={favoriteContact} style={{ marginHorizontal: 4, alignItems: 'center', justifyContent: 'center', width: 45, height: 45, borderRadius: 50, backgroundColor: Colors.green }}>
+                        <Ionicons name={'bookmark'} size={25} color={'white'} />
+                    </TouchableOpacity>
+                }
             </Animatable.View>
 
             {/* === Button === */}
