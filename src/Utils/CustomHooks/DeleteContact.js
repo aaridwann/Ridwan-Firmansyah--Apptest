@@ -1,4 +1,5 @@
-import { deleteContact, errorFetching, startFethcing } from "../../Redux/slice"
+import { deleteContact, doneFetching, errorFetching, startFethcing } from "../../Redux/slice"
+import UseFetchdata from "./useFetchData"
 
 
 const options = {
@@ -8,13 +9,22 @@ const options = {
 
 export default async function DeleteContact(dispatch, id) {
     dispatch(startFethcing())
-    try {
-        const res = await fetch(`https://simple-contact-crud.herokuapp.com/contact/${id}`, options)
-        const data = await res.json()
-        console.log(data);
-        return dispatch(deleteContact())
-    } catch (error) {
-        console.log(error);
-        // return dispatch(errorFetching(error.message))
-    }
+    return await (
+        fetch(`https://simple-contact-crud.herokuapp.com/contact/${id}`, options)
+            .then(async (res) => {
+                if (res.status < 300) {
+                    res = await res.json()
+                    UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+                    return true
+                }
+                res = await res.json()
+                dispatch(errorFetching(res.message))
+                return false
+            })
+            .catch((err) => {
+                console.log(err);
+                dispatch(errorFetching(err))
+                return false
+            })
+    )
 }

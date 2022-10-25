@@ -7,6 +7,7 @@ import * as Animatable from 'react-native-animatable';
 import { addFavorite } from '../../Redux/slice'
 import { useNavigation } from '@react-navigation/native'
 import DeleteContact from '../../Utils/CustomHooks/DeleteContact'
+import AlertComponent from '../Alert/AlertComponent'
 
 
 function ContactComponent({ style, dataContact }) {
@@ -14,7 +15,7 @@ function ContactComponent({ style, dataContact }) {
     const { data } = contact
     const dispatch = useDispatch()
     const navigation = useNavigation()
-
+    
 
     const deleteContact = useCallback((contact) => {
         Alert.alert('Delete Contact', `Are you sure for delete ${contact.firstName + ' ' + contact.lastName} from your contact ?`, [
@@ -24,7 +25,9 @@ function ContactComponent({ style, dataContact }) {
                 style: "cancel"
             },
             {
-                text: "OK", onPress: async () => await DeleteContact(dispatch, contact.id)
+                text: "OK", onPress: async () => {
+                    if (await DeleteContact(dispatch, contact.id)) alert('Success Delete')
+                }
 
             }
         ])
@@ -49,10 +52,11 @@ function ContactComponent({ style, dataContact }) {
 
     return (
         <View style={{ ...style, width: '100%', flex: 1, alignItems: 'center' }}>
-            <Text style={{ fontSize: 18, alignSelf: 'flex-start', paddingHorizontal: 10, marginTop: 15 }}>All Contact</Text>
+           
+            <Text style={{ fontSize: 18, alignSelf: 'flex-start', paddingHorizontal: 10, color: Colors.coklat, marginTop: 15 }}>All Contact</Text>
             <FlatList
                 style={{ flex: 1, width: '100%' }}
-                contentContainerStyle={{ width: '100%', paddingTop: 20 }}
+                contentContainerStyle={{ width: '100%', paddingTop: 20, paddingHorizontal: 8, }}
                 data={data}
                 renderItem={({ item }) =>
                     <ItemsContact
@@ -89,7 +93,7 @@ function ItemsContact({ id, firstName, lastName, photo, deleteContact, updateCon
         from: {
             // opacity: !options ? 0 : 1,
             left: options ? 0 : 200,
-            // transform: [{ translateX: options ? 200 : 0 }]
+            // transform: [{translateX: options ? 200 : 0 }]
         },
         to: {
             left: options ? 200 : 0,
@@ -118,7 +122,7 @@ function ItemsContact({ id, firstName, lastName, photo, deleteContact, updateCon
 
     return (
         <View onStartShouldSetResponder={closeOptions}
-            style={{ marginVertical: 1, borderBottomColor: Colors.gray, borderBottomWidth: 0.5, paddingHorizontal: 15, width: '100%', height: 85, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            style={{ borderRadius: 20, overflow: 'hidden', marginVertical: 1, borderBottomColor: Colors.gray, borderBottomWidth: 0.5, paddingHorizontal: 15, width: '100%', height: 85, backgroundColor: 'white', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
 
             {/* === Img === */}
             <Animatable.View duration={500} easing='ease-in-out' animation={anim} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -129,8 +133,8 @@ function ItemsContact({ id, firstName, lastName, photo, deleteContact, updateCon
                 </TouchableOpacity>
 
                 <View>
-                    <Text style={{ fontSize: 17 }}>{firstName}</Text>
-                    <Text style={{ fontSize: 10 }}>{lastName}</Text>
+                    <Text style={{ fontSize: 17, color: 'gray' }}>{firstName}</Text>
+                    <Text style={{ fontSize: 10, color: 'gray' }}>{lastName}</Text>
                 </View>
             </Animatable.View>
 

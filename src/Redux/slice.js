@@ -1,25 +1,8 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-const axios = require('axios').default;
+import { createSlice } from '@reduxjs/toolkit'
 
 const initData = {
     loading: true,
-    data: [
-        {
-            "id": "93ad6070-c92b-11e8-b02f-cbfa15db428b",
-            "firstName": "Bilbo",
-            "lastName": "Baggins",
-            "age": 111,
-            "photo": "https://i.pinimg.com/564x/59/14/df/5914dfdd849b77354e1958e75243855e.jpg"
-        },
-        {
-            "id": "b3abd640-c92b-11e8-b02f-cbfa15db428b",
-            "firstName": "Luke",
-            "lastName": "Skywalker",
-            "age": 20,
-            "photo": "https://i.pinimg.com/564x/00/c6/af/00c6afef099ca4cf4e2f9c2cac33b04f.jpg"
-        },
-
-    ],
+    data: [],
     favorite: [],
     error: false,
     message: ''
@@ -30,10 +13,13 @@ export const contactSlice = createSlice({
     initialState: initData,
     reducers: {
         startFethcing: (state) => {
-            state.loading = true
+            // error = false
+            // message = ''
+            // loading = true
+            return ({ ...state, error: false, message: '', loading: true })
         },
         doneFetching: (state) => {
-            state.loading = false
+            return ({ ...state, error: false, message: '', loading: false })
         },
         getData: async (state) => {
 
@@ -53,7 +39,6 @@ export const contactSlice = createSlice({
             return test ? state : ({ ...state, favorite: [...state.favorite, { ...payload }] })
         },
         errorFetching: (state, { payload }) => {
-            console.log('payload message', payload);
             return ({ ...state, loading: false, error: true, message: payload })
         }
     }

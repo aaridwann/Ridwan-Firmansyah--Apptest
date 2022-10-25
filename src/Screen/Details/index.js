@@ -1,9 +1,11 @@
-import { Text } from 'react-native'
+import { Alert, Text } from 'react-native'
 import React, { Suspense, useCallback, useEffect, useReducer } from 'react'
 import { useRoute } from '@react-navigation/native'
 const AddContactScreen = React.lazy(() => import('../AddContact'))
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { doneFetching, errorFetching, startFethcing } from '../../Redux/slice';
+import EditContact from '../../Utils/CustomHooks/EditContact';
+import GetContactDetail from '../../Utils/CustomHooks/GetContactDetails';
 
 const fkDate = [
     { id: 1, name: 'ridwan' },
@@ -15,35 +17,30 @@ export default function DetailsScreen() {
     const dispatch = useDispatch()
     const [state, dispatchDetails] = useReducer(reducer, stateDetails)
     const { id, firstName, lastName, age } = useRoute().params.item
+    const { error, message } = useSelector(state => state.contact)
 
     const editable = useCallback(() => {
         dispatchDetails({ type: 'ENABLE_EDIT' })
     }, [])
 
-    const submit = useCallback((data) => {
+    const submit = useCallback(async (data) => {
         if (JSON.stringify(data) == JSON.stringify(state.dataDetails)) return alert('you haven`t changed anything')
+        const Req = await EditContact(data, dispatch)
+        if (Req) {
+            editable()
+            alert('Success Edit Contact')
+        }
     }, [])
 
     useEffect(() => {
-        async function fetchDetails(id) {
-            dispatch(startFethcing())
-            try {
-                const res = await fetch(`https://simple-contact-crud.herokuapp.com/contact/${id}`, { method: 'GET' })
-                const data = await res.json()
-                // setDataDetails(data.data)
-                dispatchDetails({ type: 'ADD_DATA_DETAILS', payload: data.data })
-                dispatch(doneFetching())
-            } catch (error) {
-                console.log(error);
-                dispatch(errorFetching())
-            }
-        }
-
-        fetchDetails(id)
+        GetContactDetail(id, dispatch, dispatchDetails)
     }, [id])
 
+
+    // console.log('error nihh -=>', error);
     return (
         <Suspense fallback={<Text>Loading...</Text>}>
+            {/* {error && Alert.alert('error',message)} */}
             <AddContactScreen submitEdit={(data) => submit(data)} editState={state.editable} editable={() => editable()} title={state.editable ? 'Edit Contact' : 'Details Contact'} dataDetails={state.dataDetails} />
         </Suspense>
     )

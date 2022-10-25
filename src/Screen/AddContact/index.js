@@ -4,9 +4,11 @@ import TopBarComponent from '../../Components/TopBar/TopBar'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Colors from '../../Utils/Constant/Color'
 import { launchImageLibrary } from 'react-native-image-picker';
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { startFethcing } from '../../Redux/slice'
 import { useNavigation, useRoute } from '@react-navigation/native'
+import AddContact from '../../Utils/CustomHooks/AddContact'
+import AlertComponent from '../../Components/Alert/AlertComponent'
 
 
 
@@ -16,6 +18,8 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
     const details = 'Contact Details'
     const dispatch = useDispatch()
     const navigate = useNavigation()
+    const { error, message } = useSelector(state => state.contact)
+
 
     function changeHandler(key, data) {
         setData(prev => ({ ...prev, [key]: data }))
@@ -32,19 +36,10 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
         return setData(prev => ({ ...prev, photo: result.assets[0].uri }));
     }
 
-    function submit() {
+    async function submit() {
         if (!data.firstName || !data.lastName || !data.age) return alert('Input with right data')
-        dispatch(startFethcing())
-
-        fetch('https://simple-contact-crud.herokuapp.com/contact', { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } })
-            .then(res => res.json())
-            .then(data => {
-                return navigate.navigate('Contact')
-            })
-            .catch((err) => {
-                dispatch()
-                console.log(err)
-            })
+        const req = await AddContact(data, dispatch)
+        if (req) return navigate.navigate('Contact')
     }
 
     function cancelEdit() {
@@ -67,14 +62,15 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
         dataDetails && setData(prev => dataDetails)
     }, [dataDetails])
 
+
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
-
+            {error && <AlertComponent dispatch={dispatch} message={message} title={'error'} />}
             {/* === Background === */}
             <Image style={{ position: 'absolute', zIndex: -10, width: '100%', height: 1000 }} source={require('../../Assets/wave.png')} />
 
             {/* === Topbar === */}
-            <TopBarComponent title={title || 'Add Contact'} style={{ marginTop: 10 }} rightIcon={route == details && !editState ? false : 'checkmark'} rightIconMethod={route == details && editState? () => submitEdit(data) : submit} />
+            <TopBarComponent title={title || 'Add Contact'} style={{ marginTop: 10 }} rightIcon={route == details && !editState ? null : 'checkmark'} rightIconMethod={route == details && editState ? () => submitEdit(data) : submit} />
 
             {/* === Photo === */}
             <View style={{ borderWidth: editState ? 8 : 0, borderColor: 'white', width: 150, height: 150, alignItems: 'center', justifyContent: 'center', marginTop: 40, backgroundColor: 'white', borderRadius: 500, overflow: 'hidden' }}>
@@ -115,7 +111,7 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
                 {/* === Button Edit === */}
                 {route == details &&
                     <TouchableOpacity onPress={editState ? cancelEdit : editable} style={{ borderRadius: 20, alignSelf: 'center', marginTop: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', width: 100, paddingVertical: 5 }}>
-                        <Text style={{ fontSize: 15, fontWeight: '500', }}>{editState ? 'Cancel' : 'Edit'}</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '500', color: Colors.coklat }}>{editState ? 'Cancel' : 'Edit'}</Text>
                     </TouchableOpacity>
                 }
 

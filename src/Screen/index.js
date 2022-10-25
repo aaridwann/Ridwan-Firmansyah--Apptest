@@ -1,6 +1,7 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Text } from 'react-native';
 import Colors from '../Utils/Constant/Color';
 import AddContactScreen from './AddContact';
 import DetailsScreen from './Details';
