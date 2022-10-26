@@ -17,7 +17,7 @@ export default async function EditContact(data, dispatch) {
         .then(async (res) => {
             if (res.status < 300) {
                 // dispatch(doneFetching())
-                UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+               await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
                 return true
             }
             res = await res.json()

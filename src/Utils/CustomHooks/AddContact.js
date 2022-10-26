@@ -3,6 +3,8 @@ import UseFetchdata from "./useFetchData";
 
 export default async function AddContact(data, dispatch) {
     dispatch(startFethcing())
+    data.firstName = data.firstName.trim()
+    data.lastName = data.lastName.trim()
     let options = { method: 'POST', body: JSON.stringify(data), headers: { 'Content-Type': 'application/json' } }
 
     return await fetch('https://simple-contact-crud.herokuapp.com/contact', options)
@@ -14,7 +16,7 @@ export default async function AddContact(data, dispatch) {
             }
             res = await res.json()
             dispatch(doneFetching())
-            UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+            await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
             return true
         })
         .catch(err => {

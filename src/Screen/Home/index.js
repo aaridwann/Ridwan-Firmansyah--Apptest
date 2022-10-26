@@ -1,17 +1,23 @@
+import  { Suspense, useCallback, useEffect } from 'react'
 import { View } from 'react-native'
-import React, { Suspense, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import Colors from '../../Utils/Constant/Color'
 import { useRoute } from '@react-navigation/native';
 import UseFetchdata from '../../Utils/CustomHooks/useFetchData';
 import { filterData } from '../../Redux/slice';
+import * as Animatable from 'react-native-animatable';
 import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
-const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar'));
-const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent'))
-const FavoriteComponent = React.lazy(() => import('../../Components/FavoriteComponent/FavoriteComponent'));
-const ContactComponent = React.lazy(() => import('../../Components/ContactComponent/ContactComponent'));
-const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComponent'));
+// const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar.js'));
+// const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent.js'))
+// const FavoriteComponent = React.lazy(() => import('../../Components/FavoriteComponent/FavoriteComponent.js'));
+// const ContactComponent = React.lazy(() => import('../../Components/ContactComponent/ContactComponent.js'));
+// const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComponent.js'));
+import TopBarComponent from '../../Components/TopBar/TopBar'
+import SearchInputComponent from '../../Components/InputComponent/InputComponent'
+import FavoriteComponent from '../../Components/FavoriteComponent/FavoriteComponent'
+import ContactComponent from '../../Components/ContactComponent/ContactComponent'
+import AlertComponent from '../../Components/Alert/AlertComponent'
 
 
 export default function HomeScreen() {
@@ -25,14 +31,25 @@ export default function HomeScreen() {
         dispatch(filterData(name))
     }, [])
 
+
     useEffect(() => {
-        UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+        (async () => await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch))()
     }, [])
+
+    const animConfig = {
+        from: {
+            transform: [{ translateY: -500 }]
+        },
+        to: {
+            transform: [{ translateY: 0 }]
+        }
+    }
 
     return (
         <View style={{ flex: 1, width: '100%', alignItems: 'center', backgroundColor: Colors.white }}>
             {error && <AlertComponent dispatch={dispatch} title={'Error'} message={message} />}
-            <View style={{ backgroundColor: Colors.coklat, position: 'absolute', width: '100%', height: 100 }} />
+
+            <Animatable.View useNativeDriver={true} easing={'ease-in-out-cubic'} duration={700} delay={150} animation={animConfig} style={{ backgroundColor: Colors.coklat, position: 'absolute', width: '100%', height: 100 }} />
 
             {/* Top Bar Component */}
             <Suspense fallback={<LoadingComponent />}>

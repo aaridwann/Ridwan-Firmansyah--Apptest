@@ -3,11 +3,25 @@ import { TextInput, TouchableOpacity, View } from "react-native";
 import { useWindowDimensions } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Colors from "../../Utils/Constant/Color";
+import * as Animatable from 'react-native-animatable';
+
 
 function SearchInputComponent({ style, input, submit }) {
     const { width, height } = useWindowDimensions()
+
+    const animConfig = {
+        from:{
+            transform: [{ translateX: -500 }]
+        },
+        to:{
+            transform: [{ translateX: 0 }]
+            // opacity:1
+            
+        }
+    }
+
     return (
-        <View style={{
+        <Animatable.View useNativeDriver={true} easing={'ease-in-out-cubic'} duration={700} delay={200} animation={animConfig} style={{
             ...style, shadowColor: "#000",
             shadowOffset: {
                 width: 0,
@@ -21,7 +35,7 @@ function SearchInputComponent({ style, input, submit }) {
             <TouchableOpacity onPress={submit}>
                 <Ionicons name={'search'} size={25} color={Colors.coklat} />
             </TouchableOpacity>
-        </View>
+        </Animatable.View>
     )
 }
 
