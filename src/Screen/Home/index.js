@@ -1,33 +1,58 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { View } from 'react-native'
+import React, { Suspense, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import Colors from '../../Utils/Constant/Color'
-import TopBarComponent from '../../Components/TopBar/TopBar';
 import { useRoute } from '@react-navigation/native';
-import SearchInputComponent from '../../Components/InputComponent/InputComponent'
-import FavoriteComponent from '../../Components/FavoriteComponent/FavoriteComponent';
+import UseFetchdata from '../../Utils/CustomHooks/useFetchData';
+import { filterData } from '../../Redux/slice';
+import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
+const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar'));
+const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent'))
+const FavoriteComponent = React.lazy(() => import('../../Components/FavoriteComponent/FavoriteComponent'));
+const ContactComponent = React.lazy(() => import('../../Components/ContactComponent/ContactComponent'));
+const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComponent'));
+
 
 export default function HomeScreen() {
-    const route = useRoute()
-    const { contact } = useSelector((state) => state)
+    const dispatch = useDispatch()
     const navigate = useNavigation()
-    console.log(route);
+    const route = useRoute()
+    const { filter, error, message, favorite, data } = useSelector(state => state.contact)
+
+
+    const Search = useCallback((name) => {
+        dispatch(filterData(name))
+    }, [])
+
+    useEffect(() => {
+        UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+    }, [])
+
     return (
-        <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
+        <View style={{ flex: 1, width: '100%', alignItems: 'center', backgroundColor: Colors.white }}>
+            {error && <AlertComponent dispatch={dispatch} title={'Error'} message={message} />}
             <View style={{ backgroundColor: Colors.coklat, position: 'absolute', width: '100%', height: 100 }} />
+
             {/* Top Bar Component */}
-            <TopBarComponent title={route.name} style={{ marginTop: 5 }} />
+            <Suspense fallback={<LoadingComponent />}>
+                <TopBarComponent title={route.name} style={{ marginTop: 5 }} rightIconMethod={() => navigate.navigate('Add Contact')} />
+            </Suspense>
 
             {/* Search Component */}
-            <SearchInputComponent input={(data) => console.log(data)} style={{ marginTop: 35 }} />
+            <Suspense fallback={<LoadingComponent />}>
+                <SearchInputComponent input={(data) => Search(data)} style={{ marginTop: 35 }} />
+            </Suspense>
 
             {/* Favorite Contact Component */}
-            <FavoriteComponent style={{ marginTop: 20 }} />
+            <Suspense fallback={<LoadingComponent />}>
+                <FavoriteComponent favoriteData={favorite} style={{ marginTop: 20 }} />
+            </Suspense>
 
-            <TouchableOpacity onPress={() => navigate.navigate('Details', { name: 'ridwan', age: 26 })}>
-                <Text>Press</Text>
-            </TouchableOpacity>
+            {/* Contact Content */}
+            <Suspense fallback={<LoadingComponent />}>
+                <ContactComponent />
+            </Suspense>
         </View>
     )
 }

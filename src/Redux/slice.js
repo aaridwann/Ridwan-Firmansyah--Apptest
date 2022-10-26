@@ -2,20 +2,9 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initData = {
     loading: true,
-    data: [{
-        "id": "93ad6070-c92b-11e8-b02f-cbfa15db428b",
-        "firstName": "Bilbo",
-        "lastName": "Baggins",
-        "age": 111,
-        "photo": "http://vignette1.wikia.nocookie.net/lotr/images/6/68/Bilbo_baggins.jpg/revision/latest?cb=20130202022550"
-    },
-    {
-        "id": "b3abd640-c92b-11e8-b02f-cbfa15db428b",
-        "firstName": "Luke",
-        "lastName": "Skywalker",
-        "age": 20,
-        "photo": "N/A"
-    }],
+    data: [],
+    favorite: [],
+    filter: false,
     error: false,
     message: ''
 }
@@ -24,20 +13,34 @@ export const contactSlice = createSlice({
     name: 'contact',
     initialState: initData,
     reducers: {
-        getData: async (state) => {
-
+        startFethcing: (state) => {
+            return ({ ...state, error: false, message: '', loading: true })
         },
-        addContact: async (state, payload) => {
-
+        doneFetching: (state) => {
+            return ({ ...state, error: false, message: '', loading: false })
         },
-        deleteContact: async (state, payload) => {
-
+        filterData: (state, { payload }) => {
+            const filter = state.data.filter((data) => data.firstName.toLowerCase().includes(payload))
+            return ({ ...state, filter: filter })
         },
-        editContact: async (state, payload) => {
-
+        addContact: (state, { payload }) => {
+            return ({ ...state, data: payload, loading: false })
+        },
+        deleteContact: (state, payload) => {
+            return ({ ...state, loading: false })
+        },
+        addFavorite: (state, { payload }) => {
+            const check = state?.favorite?.map((x) => x.id)
+            const test = check?.includes(payload.id)
+            return test ? state : ({ ...state, favorite: [...state.favorite, { ...payload }] })
+        },
+        errorFetching: (state, { payload }) => {
+            return ({ ...state, loading: false, error: true, message: payload })
         }
     }
 })
 
-export const { getData, addContact, deleteContact, editContact } = contactSlice.actions
+
+
+export const { filterData, addContact, deleteContact, addFavorite, errorFetching, startFethcing, doneFetching } = contactSlice.actions
 export default contactSlice.reducer
