@@ -53,7 +53,7 @@ function ContactComponent({ style }) {
 
     }, [])
 
-    const dataContact = useMemo(() => data, [data])
+    const dataContact = useMemo(() => data, [])
 
     const animConfig = {
         from: {
@@ -87,7 +87,7 @@ function ContactComponent({ style }) {
                 onRefresh={refreshHandler}
                 style={{ flex: 1, width: '100%' }}
                 contentContainerStyle={{ width: '100%', padding: 15 }}
-                data={filter ? filter : dataContact}
+                data={filter ? filter : data}
                 keyExtractor={({ id }) => id}
                 showsVerticalScrollIndicator={false}
                 renderItem={({ item }) =>
