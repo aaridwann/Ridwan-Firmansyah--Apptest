@@ -1,10 +1,11 @@
-import React, { Suspense, useCallback, useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { useRoute } from '@react-navigation/native'
 import { useDispatch } from 'react-redux';
 import EditContact from '../../Utils/CustomHooks/EditContact';
 import GetContactDetail from '../../Utils/CustomHooks/GetContactDetails';
 import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
-const AddContactScreen = React.lazy(() => import('../AddContact'))
+// const AddContactScreen = React.lazy(() => import('../AddContact'))
+import AddContactScreen from '../AddContact';
 
 
 export default function DetailsScreen() {
@@ -31,9 +32,9 @@ export default function DetailsScreen() {
 
 
     return (
-        <Suspense fallback={<LoadingComponent />}>
+        // <Suspense fallback={<LoadingComponent />}>
             <AddContactScreen submitEdit={(data) => submit(data)} editState={state.editable} editable={() => editable()} title={state.editable ? 'Edit Contact' : 'Details Contact'} dataDetails={state.dataDetails} />
-        </Suspense>
+        // </Suspense>
     )
 }
 
