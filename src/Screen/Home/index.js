@@ -18,12 +18,13 @@ export default function HomeScreen() {
     const dispatch = useDispatch()
     const navigate = useNavigation()
     const route = useRoute()
-    const { filter, error, message, favorite, data } = useSelector(state => state.contact)
+    const {filter, error, message, favorite, data } = useSelector(state => state.contact)
 
 
     const Search = useCallback((name) => {
         dispatch(filterData(name))
-    }, [])
+    },[])
+  
 
     useEffect(() => {
         UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
