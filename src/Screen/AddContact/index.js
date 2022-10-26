@@ -9,6 +9,7 @@ import { startFethcing } from '../../Redux/slice'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import AddContact from '../../Utils/CustomHooks/AddContact'
 import AlertComponent from '../../Components/Alert/AlertComponent'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 
 
@@ -18,7 +19,7 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
     const details = 'Contact Details'
     const dispatch = useDispatch()
     const navigate = useNavigation()
-    const { error, message } = useSelector(state => state.contact)
+    const { error, message, loading } = useSelector(state => state.contact)
 
 
     function changeHandler(key, data) {
@@ -65,6 +66,13 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
 
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
+            {loading &&
+                <Spinner
+                    visible={loading}
+                    textContent={'Loading...'}
+                    textStyle={{ color: '#FFF' }}
+                />
+            }
 
             {error && <AlertComponent dispatch={dispatch} message={message} title={'error'} />}
 
@@ -114,22 +122,22 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>Age</Text>
-                {route == details && !editState ?
-                    <Text style={{ color: 'white', fontWeight: '500', fontSize: 27, marginRight: 10 }}>{data?.age}</Text>
-                    :
-                    <TextInput editable={route == details ? editState : true} value={data?.age} onChangeText={(data) => changeHandler('age', data)} keyboardType='numeric' textAlign='center' placeholderTextColor={'white'} style={{ color: 'white', width: '70%', borderBottomWidth: 1, borderBottomColor: 'white' }} placeholder='Age' />
+                    <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>Age</Text>
+                    {route == details && !editState ?
+                        <Text style={{ color: 'white', fontWeight: '500', fontSize: 27, marginRight: 10 }}>{data?.age}</Text>
+                        :
+                        <TextInput editable={route == details ? editState : true} value={data?.age} onChangeText={(data) => changeHandler('age', data)} keyboardType='numeric' textAlign='center' placeholderTextColor={'white'} style={{ color: 'white', width: '70%', borderBottomWidth: 1, borderBottomColor: 'white' }} placeholder='Age' />
+                    }
+                </View>
+
+                {/* === Button Edit === */}
+                {route == details &&
+                    <TouchableOpacity onPress={editState ? cancelEdit : editable} style={{ borderRadius: 20, alignSelf: 'center', marginTop: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', width: 100, paddingVertical: 5 }}>
+                        <Text style={{ fontSize: 15, fontWeight: '500', color: Colors.coklat }}>{editState ? 'Cancel' : 'Edit'}</Text>
+                    </TouchableOpacity>
                 }
+
             </View>
-
-            {/* === Button Edit === */}
-            {route == details &&
-                <TouchableOpacity onPress={editState ? cancelEdit : editable} style={{ borderRadius: 20, alignSelf: 'center', marginTop: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', width: 100, paddingVertical: 5 }}>
-                    <Text style={{ fontSize: 15, fontWeight: '500', color: Colors.coklat }}>{editState ? 'Cancel' : 'Edit'}</Text>
-                </TouchableOpacity>
-            }
-
-        </View>
 
         </View >
     )

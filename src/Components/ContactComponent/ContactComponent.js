@@ -7,10 +7,11 @@ import * as Animatable from 'react-native-animatable';
 import { addFavorite } from '../../Redux/slice'
 import { useNavigation } from '@react-navigation/native'
 import DeleteContact from '../../Utils/CustomHooks/DeleteContact'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 
 function ContactComponent({ style }) {
-    const { data, filter } = useSelector(state => state.contact)
+    const { data, filter, loading } = useSelector(state => state.contact)
     const dispatch = useDispatch()
     const navigation = useNavigation()
 
@@ -46,6 +47,13 @@ function ContactComponent({ style }) {
 
     return (
         <View style={{ ...style, width: '100%', flex: 1, alignItems: 'center' }}>
+            {loading &&
+                <Spinner
+                    visible={loading}
+                    textContent={'Loading...'}
+                    textStyle={{ color: '#FFF' }}
+                />
+            }
             <Image
                 style={{ width: '100%', height: 700, position: 'absolute', zIndex: 0, opacity: 0.8 }}
                 source={require('../../Assets/peak.png')}
