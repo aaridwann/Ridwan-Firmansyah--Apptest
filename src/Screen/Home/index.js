@@ -1,10 +1,11 @@
 import { View } from 'react-native'
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import Colors from '../../Utils/Constant/Color'
 import { useRoute } from '@react-navigation/native';
 import UseFetchdata from '../../Utils/CustomHooks/useFetchData';
+import { filterData } from '../../Redux/slice';
 import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
 const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar'));
 const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent'))
@@ -14,13 +15,15 @@ const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComp
 
 
 export default function HomeScreen() {
+    const dispatch = useDispatch()
     const navigate = useNavigation()
     const route = useRoute()
-    const { contact } = useSelector((state) => state)
-    const { favorite } = contact
-    const { error, message } = useSelector(state => state.contact)
+    const { filter, error, message, favorite, data } = useSelector(state => state.contact)
 
-    const dispatch = useDispatch()
+
+    const Search = useCallback((name) => {
+        dispatch(filterData(name))
+    }, [])
 
     useEffect(() => {
         UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
@@ -38,7 +41,7 @@ export default function HomeScreen() {
 
             {/* Search Component */}
             <Suspense fallback={<LoadingComponent />}>
-                <SearchInputComponent input={(data) => console.log(data)} style={{ marginTop: 35 }} />
+                <SearchInputComponent input={(data) => Search(data)} style={{ marginTop: 35 }} />
             </Suspense>
 
             {/* Favorite Contact Component */}
@@ -47,11 +50,9 @@ export default function HomeScreen() {
             </Suspense>
 
             {/* Contact Content */}
-            {/* {loading ? <Text>Loading...</Text> : */}
             <Suspense fallback={<LoadingComponent />}>
                 <ContactComponent />
             </Suspense>
-            {/* } */}
         </View>
     )
 }

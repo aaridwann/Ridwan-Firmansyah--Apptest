@@ -1,23 +1,16 @@
-import { Alert, Text } from 'react-native'
 import React, { Suspense, useCallback, useEffect, useReducer } from 'react'
 import { useRoute } from '@react-navigation/native'
-const AddContactScreen = React.lazy(() => import('../AddContact'))
-import { useDispatch, useSelector } from 'react-redux';
-import { doneFetching, errorFetching, startFethcing } from '../../Redux/slice';
+import { useDispatch } from 'react-redux';
 import EditContact from '../../Utils/CustomHooks/EditContact';
 import GetContactDetail from '../../Utils/CustomHooks/GetContactDetails';
+import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
+const AddContactScreen = React.lazy(() => import('../AddContact'))
 
-const fkDate = [
-    { id: 1, name: 'ridwan' },
-    { id: 2, name: 'anggi' },
-    { id: 3, name: 'duri' },
-]
 
 export default function DetailsScreen() {
     const dispatch = useDispatch()
     const [state, dispatchDetails] = useReducer(reducer, stateDetails)
-    const { id, firstName, lastName, age } = useRoute().params.item
-    const { error, message } = useSelector(state => state.contact)
+    const { id } = useRoute().params.item
 
     const editable = useCallback(() => {
         dispatchDetails({ type: 'ENABLE_EDIT' })
@@ -37,10 +30,8 @@ export default function DetailsScreen() {
     }, [id])
 
 
-    // console.log('error nihh -=>', error);
     return (
-        <Suspense fallback={<Text>Loading...</Text>}>
-            {/* {error && Alert.alert('error',message)} */}
+        <Suspense fallback={<LoadingComponent />}>
             <AddContactScreen submitEdit={(data) => submit(data)} editState={state.editable} editable={() => editable()} title={state.editable ? 'Edit Contact' : 'Details Contact'} dataDetails={state.dataDetails} />
         </Suspense>
     )

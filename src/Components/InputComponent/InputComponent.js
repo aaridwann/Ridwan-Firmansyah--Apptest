@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TextInput, TouchableOpacity, View } from "react-native";
 import { useWindowDimensions } from "react-native";
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Colors from "../../Utils/Constant/Color";

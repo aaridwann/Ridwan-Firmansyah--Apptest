@@ -65,7 +65,9 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
 
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
+
             {error && <AlertComponent dispatch={dispatch} message={message} title={'error'} />}
+
             {/* === Background === */}
             <Image style={{ position: 'absolute', zIndex: -10, width: '100%', height: 1000 }} source={require('../../Assets/wave.png')} />
 
@@ -91,33 +93,45 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
 
 
             {/* === Form Input ===*/}
-            <View style={{ width: '100%', paddingHorizontal: 20, marginTop: 20, }}>
+            <View style={{ width: route == details && !editState ? '80%' : '100%', paddingHorizontal: 20, marginTop: 20, }}>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>First name</Text>
-                    <TextInput editable={route == details ? editState : true} value={data?.firstName} onChangeText={(data) => changeHandler('firstName', data)} textAlign='center' placeholderTextColor={'white'} style={{ width: '70%', borderBottomWidth: 1, color: 'white', borderBottomColor: 'white' }} placeholder='Firstname' />
+                    {route == details && !editState ?
+                        <Text style={{ color: 'white', fontWeight: '500', fontSize: 27, marginRight: 10 }}>{data?.firstName}</Text>
+                        :
+                        <TextInput editable={route == details ? editState : true} value={data?.firstName} onChangeText={(data) => changeHandler('firstName', data)} textAlign='center' placeholderTextColor={'white'} style={{ width: '70%', borderBottomWidth: 1, color: 'white', borderBottomColor: 'white' }} placeholder='Firstname' />
+                    }
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>Last name</Text>
-                    <TextInput editable={route == details ? editState : true} value={data?.lastName} onChangeText={(data) => changeHandler('lastName', data)} textAlign='center' placeholderTextColor={'white'} style={{ width: '70%', borderBottomWidth: 1, color: 'white', borderBottomColor: 'white' }} placeholder='Lastname' />
+                    {route == details && !editState ?
+                        <Text style={{ color: 'white', fontWeight: '500', fontSize: 27, marginRight: 10 }}>{data?.lastName}</Text>
+                        :
+                        <TextInput editable={route == details ? editState : true} value={data?.lastName} onChangeText={(data) => changeHandler('lastName', data)} textAlign='center' placeholderTextColor={'white'} style={{ width: '70%', borderBottomWidth: 1, color: 'white', borderBottomColor: 'white' }} placeholder='Lastname' />
+                    }
                 </View>
 
                 <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>Age</Text>
+                <Text style={{ color: 'white', fontWeight: '500', fontSize: 18, marginRight: 10 }}>Age</Text>
+                {route == details && !editState ?
+                    <Text style={{ color: 'white', fontWeight: '500', fontSize: 27, marginRight: 10 }}>{data?.age}</Text>
+                    :
                     <TextInput editable={route == details ? editState : true} value={data?.age} onChangeText={(data) => changeHandler('age', data)} keyboardType='numeric' textAlign='center' placeholderTextColor={'white'} style={{ color: 'white', width: '70%', borderBottomWidth: 1, borderBottomColor: 'white' }} placeholder='Age' />
-                </View>
-
-                {/* === Button Edit === */}
-                {route == details &&
-                    <TouchableOpacity onPress={editState ? cancelEdit : editable} style={{ borderRadius: 20, alignSelf: 'center', marginTop: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', width: 100, paddingVertical: 5 }}>
-                        <Text style={{ fontSize: 15, fontWeight: '500', color: Colors.coklat }}>{editState ? 'Cancel' : 'Edit'}</Text>
-                    </TouchableOpacity>
                 }
-
             </View>
 
+            {/* === Button Edit === */}
+            {route == details &&
+                <TouchableOpacity onPress={editState ? cancelEdit : editable} style={{ borderRadius: 20, alignSelf: 'center', marginTop: 15, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', width: 100, paddingVertical: 5 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '500', color: Colors.coklat }}>{editState ? 'Cancel' : 'Edit'}</Text>
+                </TouchableOpacity>
+            }
+
         </View>
+
+        </View >
     )
 
 }

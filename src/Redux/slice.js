@@ -4,6 +4,7 @@ const initData = {
     loading: true,
     data: [],
     favorite: [],
+    filter: false,
     error: false,
     message: ''
 }
@@ -13,25 +14,20 @@ export const contactSlice = createSlice({
     initialState: initData,
     reducers: {
         startFethcing: (state) => {
-            // error = false
-            // message = ''
-            // loading = true
             return ({ ...state, error: false, message: '', loading: true })
         },
         doneFetching: (state) => {
             return ({ ...state, error: false, message: '', loading: false })
         },
-        getData: async (state) => {
-
+        filterData: (state, { payload }) => {
+            const filter = state.data.filter((data) => data.firstName.toLowerCase().includes(payload))
+            return ({ ...state, filter: filter })
         },
         addContact: (state, { payload }) => {
             return ({ ...state, data: payload, loading: false })
         },
         deleteContact: (state, payload) => {
             return ({ ...state, loading: false })
-        },
-        editContact: async (state, payload) => {
-
         },
         addFavorite: (state, { payload }) => {
             const check = state?.favorite?.map((x) => x.id)
@@ -46,5 +42,5 @@ export const contactSlice = createSlice({
 
 
 
-export const { getData, addContact, deleteContact, editContact, addFavorite, errorFetching, startFethcing, doneFetching } = contactSlice.actions
+export const { filterData, addContact, deleteContact, addFavorite, errorFetching, startFethcing, doneFetching } = contactSlice.actions
 export default contactSlice.reducer

@@ -1,7 +1,4 @@
-import {
-  configureStore, createSerializableStateInvariantMiddleware,
-  isPlain,
-} from '@reduxjs/toolkit'
+import { configureStore, createSerializableStateInvariantMiddleware, isPlain } from '@reduxjs/toolkit'
 import contactSlice from './slice.js'
 
 

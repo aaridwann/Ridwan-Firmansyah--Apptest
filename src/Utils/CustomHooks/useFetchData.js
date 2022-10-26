@@ -1,7 +1,4 @@
-import { useEffect } from "react"
-import { useDispatch } from "react-redux"
-import { addContact, errorFetching, startFetching } from "../../Redux/slice"
-
+import { addContact, errorFetching } from "../../Redux/slice"
 const options = {
     method: 'get',
     headers: { 'Content-Type': 'application/json' }
@@ -12,8 +9,7 @@ export default function UseFetchdata(url, dispatch) {
         .then(async (res) => {
             if (res.status < 300) {
                 res = await res.json()
-                data = res.data.sort((a,b) => a.firstName - b.firstName)
-                dispatch(addContact(data))
+                dispatch(addContact(res.data.sort((a, b) => (a.firstName.toLowerCase() > b.firstName.toLowerCase()) ? 1 : -1)))
                 return true
             }
             res = await res.json()
@@ -25,6 +21,4 @@ export default function UseFetchdata(url, dispatch) {
             dispatch(errorFetching(err.message))
             return false
         })
-    // .then(res => res.json())
-    // .then(data => dispatch(addContact(data.data)))
 }
