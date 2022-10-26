@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import EditContact from '../../Utils/CustomHooks/EditContact';
 import GetContactDetail from '../../Utils/CustomHooks/GetContactDetails';
 import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
-const AddContactScreen = React.lazy(() => import('../AddContact'))
+import AddContactScreen from '../AddContact'
 
 
 export default function DetailsScreen() {

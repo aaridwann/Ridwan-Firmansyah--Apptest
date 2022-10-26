@@ -1,5 +1,5 @@
+import  { Suspense, useCallback, useEffect } from 'react'
 import { View } from 'react-native'
-import React, { Suspense, useCallback, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native'
 import Colors from '../../Utils/Constant/Color'
@@ -8,11 +8,16 @@ import UseFetchdata from '../../Utils/CustomHooks/useFetchData';
 import { filterData } from '../../Redux/slice';
 import * as Animatable from 'react-native-animatable';
 import LoadingComponent from '../../Components/LoadComponent/LoadingComponent';
-const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar'));
-const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent'))
-const FavoriteComponent = React.lazy(() => import('../../Components/FavoriteComponent/FavoriteComponent'));
-const ContactComponent = React.lazy(() => import('../../Components/ContactComponent/ContactComponent'));
-const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComponent'));
+// const TopBarComponent = React.lazy(() => import('../../Components/TopBar/TopBar.js'));
+// const SearchInputComponent = React.lazy(() => import('../../Components/InputComponent/InputComponent.js'))
+// const FavoriteComponent = React.lazy(() => import('../../Components/FavoriteComponent/FavoriteComponent.js'));
+// const ContactComponent = React.lazy(() => import('../../Components/ContactComponent/ContactComponent.js'));
+// const AlertComponent = React.lazy(() => import('../../Components/Alert/AlertComponent.js'));
+import TopBarComponent from '../../Components/TopBar/TopBar'
+import SearchInputComponent from '../../Components/InputComponent/InputComponent'
+import FavoriteComponent from '../../Components/FavoriteComponent/FavoriteComponent'
+import ContactComponent from '../../Components/ContactComponent/ContactComponent'
+import AlertComponent from '../../Components/Alert/AlertComponent'
 
 
 export default function HomeScreen() {
