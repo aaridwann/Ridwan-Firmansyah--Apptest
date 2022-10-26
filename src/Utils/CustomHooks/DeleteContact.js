@@ -22,7 +22,6 @@ export default async function DeleteContact(dispatch, id) {
                 return false
             })
             .catch((err) => {
-                console.log(err);
                 dispatch(errorFetching(err))
                 return false
             })

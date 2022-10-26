@@ -47,7 +47,7 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
         Alert.alert('Cancel Edit', `Are you sure for Cancel edit ?`, [
             {
                 text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
+                onPress: () => {},
                 style: "cancel"
             },
             {

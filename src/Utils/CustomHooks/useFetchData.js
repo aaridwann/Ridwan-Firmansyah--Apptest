@@ -17,7 +17,6 @@ export default function UseFetchdata(url, dispatch) {
             return false
         })
         .catch(err => {
-            console.log(err)
             dispatch(errorFetching(err.message))
             return false
         })

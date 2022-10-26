@@ -7,11 +7,9 @@ export default async function AddContact(data, dispatch) {
 
     return await fetch('https://simple-contact-crud.herokuapp.com/contact', options)
         .then(async (res) => {
-            console.log(res);
             if (res.status >= 300) {
                 res = await res.json()
                 dispatch(errorFetching(res.message))
-                console.log(res);
                 return false
             }
             res = await res.json()
@@ -21,7 +19,6 @@ export default async function AddContact(data, dispatch) {
         })
         .catch(err => {
             dispatch(errorFetching(err.message))
-            console.log('hollaa')
             return false
         })
 }
