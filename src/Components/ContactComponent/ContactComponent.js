@@ -8,12 +8,19 @@ import { addFavorite } from '../../Redux/slice'
 import { useNavigation } from '@react-navigation/native'
 import DeleteContact from '../../Utils/CustomHooks/DeleteContact'
 import Spinner from 'react-native-loading-spinner-overlay'
+import UseFetchdata from '../../Utils/CustomHooks/useFetchData'
 
 
 function ContactComponent({ style }) {
     const { data, filter, loading } = useSelector(state => state.contact)
     const dispatch = useDispatch()
     const navigation = useNavigation()
+    const [refresh, setRefresh] = useState(false)
+
+    async function refreshHandler() {
+        await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+        setRefresh(prev => prev = false)
+    }
 
     const deleteContact = useCallback((contact) => {
         Alert.alert('Delete Contact', `Are you sure for delete ${contact.firstName + ' ' + contact.lastName} from your contact ?`, [
@@ -24,7 +31,10 @@ function ContactComponent({ style }) {
             },
             {
                 text: "OK", onPress: async () => {
-                    if (await DeleteContact(dispatch, contact.id)) Alert.alert('Success', 'Success Delete')
+                    if (await DeleteContact(dispatch, contact.id)) {
+                        UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+                        Alert.alert('Success', 'Success Delete')
+                    }
                 }
 
             }
@@ -45,6 +55,15 @@ function ContactComponent({ style }) {
 
     const dataContact = useMemo(() => data, [data])
 
+    const animConfig = {
+        from: {
+            transform: [{ translateX: 500 }]
+        },
+        to: {
+            transform: [{ translateX: 0 }]
+        }
+    }
+
     return (
         <View style={{ ...style, width: '100%', flex: 1, alignItems: 'center' }}>
             {loading &&
@@ -54,7 +73,7 @@ function ContactComponent({ style }) {
                     textStyle={{ color: '#FFF' }}
                 />
             }
-            <Image
+            <Animatable.Image duration={200} delay={170} animation={animConfig}
                 style={{ width: '100%', height: 700, position: 'absolute', zIndex: 0, opacity: 0.8 }}
                 source={require('../../Assets/peak.png')}
             />
@@ -64,6 +83,8 @@ function ContactComponent({ style }) {
             {filter.length < 1 && <Text style={{ color: 'gray', marginTop: 25, fontSize: 16, paddingVertical: 40 }}> Contact not found </Text>}
 
             <FlatList
+                refreshing={refresh}
+                onRefresh={refreshHandler}
                 style={{ flex: 1, width: '100%' }}
                 contentContainerStyle={{ width: '100%', padding: 15 }}
                 data={filter ? filter : dataContact}

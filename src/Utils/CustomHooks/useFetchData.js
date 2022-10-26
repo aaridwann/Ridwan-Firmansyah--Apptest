@@ -4,12 +4,13 @@ const options = {
     headers: { 'Content-Type': 'application/json' }
 }
 
-export default function UseFetchdata(url, dispatch) {
-    return fetch(url, options)
+export default async function UseFetchdata(url, dispatch) {
+    return await fetch(url, options)
         .then(async (res) => {
             if (res.status < 300) {
                 res = await res.json()
-                dispatch(addContact(res.data.sort((a, b) => (a.firstName.toLowerCase() > b.firstName.toLowerCase()) ? 1 : -1)))
+                const data = res.data.sort((a, b) => (a.firstName.toLowerCase() > b.firstName.toLowerCase()) ? 1 : -1)
+                dispatch(addContact(data))
                 return true
             }
             res = await res.json()

@@ -20,7 +20,7 @@ export const contactSlice = createSlice({
             return ({ ...state, error: false, message: '', loading: false })
         },
         filterData: (state, { payload }) => {
-            const filter = state.data.filter((data) => data.firstName.toLowerCase().includes(payload))
+            const filter = state.data.filter((data) => data.firstName.toLowerCase().includes(payload.toLowerCase()))
             return ({ ...state, filter: filter })
         },
         addContact: (state, { payload }) => {

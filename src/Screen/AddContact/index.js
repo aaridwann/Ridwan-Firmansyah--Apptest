@@ -10,6 +10,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import AddContact from '../../Utils/CustomHooks/AddContact'
 import AlertComponent from '../../Components/Alert/AlertComponent'
 import Spinner from 'react-native-loading-spinner-overlay'
+import * as Animatable from 'react-native-animatable';
 
 
 
@@ -21,6 +22,24 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
     const navigate = useNavigation()
     const { error, message, loading } = useSelector(state => state.contact)
 
+    const animConfig = {
+        animBg: {
+            from: {
+                transform: [{ translateY: -500 }]
+            },
+            to: {
+                transform: [{ translateY: 0 }]
+            }
+        },
+        photo: {
+            from: {
+                transform: [{ scale: 0 }]
+            },
+            to: {
+                transform: [{ scale: 1 }]
+            }
+        }
+    }
 
     function changeHandler(key, data) {
         setData(prev => ({ ...prev, [key]: data }))
@@ -47,13 +66,13 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
         Alert.alert('Cancel Edit', `Are you sure for Cancel edit ?`, [
             {
                 text: "Cancel",
-                onPress: () => {},
+                onPress: () => { },
                 style: "cancel"
             },
             {
                 text: "OK", onPress: () => {
-                    editable(),
-                        setData(prev => prev = dataDetails)
+                    editable()
+                    return setData(prev => prev = dataDetails)
                 }
             }
         ])
@@ -66,29 +85,30 @@ export default function AddContactScreen({ editState, editable, title, dataDetai
 
     return (
         <View style={{ flex: 1, alignItems: 'center' }}>
-            {loading &&
+            {/* {loading &&
                 <Spinner
                     visible={loading}
                     textContent={'Loading...'}
                     textStyle={{ color: '#FFF' }}
                 />
-            }
+            } */}
 
             {error && <AlertComponent dispatch={dispatch} message={message} title={'error'} />}
 
             {/* === Background === */}
-            <Image style={{ position: 'absolute', zIndex: -10, width: '100%', height: 1000 }} source={require('../../Assets/wave.png')} />
+
+            <Animatable.Image useNativeDriver={true} easing={'ease-in-out-cubic'} duration={500} delay={250} animation={animConfig.animBg} style={{ position: 'absolute', zIndex: -10, width: '100%', height: 1000 }} source={require('../../Assets/wave.png')} />
 
             {/* === Topbar === */}
             <TopBarComponent title={title || 'Add Contact'} style={{ marginTop: 10 }} rightIcon={route == details && !editState ? null : 'checkmark'} rightIconMethod={route == details && editState ? () => submitEdit(data) : submit} />
 
             {/* === Photo === */}
-            <View style={{ borderWidth: editState ? 8 : 0, borderColor: 'white', width: 150, height: 150, alignItems: 'center', justifyContent: 'center', marginTop: 40, backgroundColor: 'white', borderRadius: 500, overflow: 'hidden' }}>
+            <Animatable.View useNativeDriver={true} easing={'ease-in-out-cubic'} duration={700} delay={600} animation={animConfig.photo} style={{ borderWidth: editState ? 8 : 0, borderColor: 'white', width: 150, height: 150, alignItems: 'center', justifyContent: 'center', marginTop: 40, backgroundColor: 'white', borderRadius: 500, overflow: 'hidden' }}>
                 {
                     data.photo ? <Image style={{ width: '100%', height: '100%' }} source={{ uri: data.photo }} /> :
                         <Ionicons name={'person'} size={120} color={Colors.coklat} />
                 }
-            </View>
+            </Animatable.View>
 
             {/* === Button Change & Add Photo ===*/}
             {(route == details && editState) || route !== details ?

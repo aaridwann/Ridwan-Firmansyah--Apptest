@@ -14,7 +14,7 @@ export default async function DeleteContact(dispatch, id) {
             .then(async (res) => {
                 if (res.status < 300) {
                     res = await res.json()
-                    UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
+                   await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
                     return true
                 }
                 res = await res.json()
