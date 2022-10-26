@@ -5,7 +5,6 @@ import Colors from '../../Utils/Constant/Color'
 
 
 function FavoriteComponent({ style, favoriteData }) {
-    console.log(favoriteData);
     return (
         <View style={{ ...style, paddingBottom: 10, width: '100%', borderBottomWidth: 0.4, borderBottomColor: Colors.coklat, paddingHorizontal: 10 }}>
             <Text style={{ fontSize: 18, color: Colors.coklat }}>Favorite Contact</Text>
@@ -35,10 +34,10 @@ function FavoriteComponent({ style, favoriteData }) {
 function ItemsContact({ name, photo }) {
     return (
         <View style={{ alignItems: 'center', justifyContent: 'center', }}>
-            <View style={{ width: 60, borderWidth:2, borderColor:Colors.coklat, height: 60, marginHorizontal: 15, borderRadius: 50, overflow: 'hidden' }}>
+            <View style={{ width: 60, borderWidth: 2, borderColor: Colors.coklat, height: 60, marginHorizontal: 15, borderRadius: 50, overflow: 'hidden' }}>
                 <Image style={{ width: '100%', height: '100%' }} source={{ uri: photo }} />
             </View>
-            <Text style={{ fontWeight: '500', fontSize: 15, color:Colors.coklat, marginTop: 10 }}>{name}</Text>
+            <Text style={{ fontWeight: '500', fontSize: 15, color: Colors.coklat, marginTop: 10 }}>{name}</Text>
         </View>
     )
 }
