@@ -17,7 +17,7 @@ function ContactComponent({ style }) {
     const navigation = useNavigation()
     const [refresh, setRefresh] = useState(false)
 
-    async function refreshHandler() {
+   async function refreshHandler() {
         await UseFetchdata('https://simple-contact-crud.herokuapp.com/contact', dispatch)
         setRefresh(prev => prev = false)
     }
